@@ -1,3 +1,4 @@
+import 'package:dignito/views/event/homepage.dart';
 import 'package:get/get.dart';
 import '../views/login.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,11 @@ class AuthController extends GetxController {
   void cancelReg() async {
     await LocalStorage.removeValue('Candid');
     Get.offAll(() => const Reg_scanqr());
+  }
+  
+  void cancelchest() async {
+    await LocalStorage.removeValue('Candid');
+    Get.offAll(() => const Homepage());
   }
 
   void logout() async {

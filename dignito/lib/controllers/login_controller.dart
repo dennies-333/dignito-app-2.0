@@ -1,4 +1,5 @@
 import 'package:dignito/views/event/homepage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dignito/errors.dart';
@@ -27,13 +28,15 @@ class LoginController extends GetxController {
       if(loginStatus == true)
       {
         String? category = await LocalStorage.getValue('category');
-        if( category == 1){
-          print("regis");
+        if( category == '0'){
+          print("registration");
           Get.to(() => const Reg_scanqr());
-        } else {
-          print("event");
+        } else if ( category == "2"){
+          print("event"); 
           Get.to(() => const Homepage());
-        }       
+        }   else{
+          errorMsg = "Contact Admin";
+        }    
       } else {
       errorMsg = 'Invalid Credentials!';
       } 

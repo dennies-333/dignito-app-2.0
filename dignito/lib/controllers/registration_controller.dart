@@ -20,15 +20,18 @@ class Regcontroller extends GetxController {
   void onQRCodeScanned(Barcode scanData) async {
     final String scannedCode = scanData.code ?? '';
     gatewayIdctrl.text = scannedCode;
-    await LocalStorage.setValue('CandId', scannedCode);
   }
 
 void getCandidateDetails() async {
 
+  await LocalStorage.setValue('CandId', gatewayIdctrl.text);
   CandidateDetails? candidateDetails = await HttpServices.isCandIdValid();
-
   if (candidateDetails != null && candidateDetails.cname.isNotEmpty) {
-    Get.off(() => Registration(candidateDetails: candidateDetails));
+    if(candidateDetails.cname == "Err"){
+      errorMsg.value = ErrorMessages.InvalidCandidateIdError;
+    } else {
+      Get.off(() => Registration(candidateDetails: candidateDetails));
+    }
   } else {
     errorMsg.value = ErrorMessages.InvalidCandidateIdError;
   }

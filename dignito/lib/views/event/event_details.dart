@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../controllers/EventController.dart';
-import '../../components/input_field.dart';
-import '../../components/button.dart';
+import '../../components/eventTextField.dart';
+import '../../components/chestnumber.dart';
 import '../../constants.dart';
 import '../../controllers/authController.dart';
-import '../../components/input_field.dart';
-import '../../custom_colors.dart';
 import '../../models/ParticipantDetails.dart';
-import '../../components/eventTextField.dart'; 
+import '../../custom_colors.dart';
 
 class EventDetails extends StatelessWidget {
   final Participantdetails participantdetails;
+
   const EventDetails({super.key, required this.participantdetails});
 
   @override
@@ -20,11 +18,9 @@ class EventDetails extends StatelessWidget {
     final Eventcontroller eventctrl = Get.put(Eventcontroller());
     final AuthController authctrl = Get.put(AuthController());
 
-    // TextEditingController for each text field
-    final TextEditingController eventNameController = TextEditingController();
-    final TextEditingController institutionNameController = TextEditingController();
-    final TextEditingController participantNameController = TextEditingController();
-    final TextEditingController allocatedNumberController = TextEditingController();
+    final String initialChestCode = participantdetails.chestcode;
+    final String initialChestNumber = participantdetails.chestnumber.toString();
+    eventctrl.allocatedNumberController.text = initialChestNumber;
 
     return WillPopScope(
       onWillPop: () async {
@@ -32,41 +28,7 @@ class EventDetails extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: CustomColors.backgroundColor,
-          automaticallyImplyLeading: false,
-          title: const Center(
-            child: Text(
-              'Dignito 2K24',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          actions: [
-          TextButton.icon(
-            onPressed: () {
-              // Handle logout functionality
-            },
-            icon: const Icon(Icons.logout, color: Colors.black), // Change icon color as needed
-            label: const Text(
-              'Logout',
-              style: TextStyle(color: Colors.black, fontSize: 18),
-            ),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              backgroundColor: CustomColors.DigPink.withOpacity(0.5), // Optional background color
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), // Rounded corners
-              ),
-            ),
-          ),
-        ],
-
-        ),
-        backgroundColor: CustomColors.backgroundColor,
+        backgroundColor: CustomColors.DigBlack,
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -75,84 +37,107 @@ class EventDetails extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      SizedBox(height: constraints.maxHeight * 0.1), // Space between AppBar and Card
-                      Card(
-                        color: CustomColors.basicBlack,
-                        elevation: 8, // Card shadow
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16), // Rounded corners
+                      // Add Logo/Image at the top (if required)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Image.asset(
+                          'assets/logo.png', // Replace with actual path
+                          height: 200,
+                          fit: BoxFit.contain,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Use EventText for Event Name
-                              const EventText(
-                                labelText: 'Event Name',
-                                icon: Icons.event,
-                                initialValue: "afadfadf",
-                              ),
-                              SizedBox(height: constraints.maxHeight * 0.03),
+                      ),
+                      
+                      // Event Name
+                      
 
-                              // Use EventText for Institution Name
-                              EventText(
-                                labelText: 'Institution Name',
-                                icon: Icons.account_balance,
-                                initialValue: participantdetails.iname,
-                              ),
-                              SizedBox(height: constraints.maxHeight * 0.03),
+                      // Institution Name
+                      EventText(
+                        labelText: 'Institution Name',
+                        icon: Icons.account_balance,
+                        initialValue: participantdetails.iname,
+                      ),
+                      SizedBox(height: constraints.maxHeight * 0.03),
 
-                              // Use EventText for Participant Name
-                              EventText(
-                                labelText: 'Participant Name',
-                                icon: Icons.person,
-                                initialValue: participantdetails.cname,
-                              ),
-                              SizedBox(height: constraints.maxHeight * 0.03),
+                      // Participant Name
+                      EventText(
+                        labelText: 'Participant Name',
+                        icon: Icons.person,
+                        initialValue: participantdetails.cname,
+                      ),
+                      SizedBox(height: constraints.maxHeight * 0.03),
+                      EventText(
+                        labelText: 'Event Name',
+                        icon: Icons.event,
+                        initialValue: participantdetails.events,
+                      ),
+                      SizedBox(height: constraints.maxHeight * 0.03),
+                      EventText(
+                        labelText: 'Payment Status',
+                        icon: Icons.event,
+                        initialValue: participantdetails.paystatus,
+                      ),
+                      SizedBox(height: constraints.maxHeight * 0.03),
+                      // Chest Number
+                      if(participantdetails.paystatus == 'Paid') ...[
+                      ChestField(
+                        icon: Icons.confirmation_number,
+                        fixedString: participantdetails.chestcode,
+                        initialNumber: participantdetails.chestnumber,
+                        numberController: eventctrl.allocatedNumberController,
+                      ),
+                      SizedBox(height: constraints.maxHeight * 0.03),
+                      ],
 
-                              // Use EventText for Allocated Number
-                              EventText(
-                                labelText: 'Allocated Number',
-                                icon: Icons.confirmation_number,
-                                initialValue: '',
-                                keyboardType: TextInputType.number,
-                                readOnly: false,
-                                controller: allocatedNumberController,
-                                 // Numeric keyboard
-                              ),
-                              SizedBox(height: constraints.maxHeight * 0.03),
-
-                              // Verify Button
-                              Center(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    eventctrl.allocateNumber();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: CustomColors.backgroundColor, // Button color
-                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12), // Rounded button
-                                    ),
-                                    textStyle: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold, // Bold button text
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Verify',
-                                    style: TextStyle(color: Colors.black), // White text color
-                                  ),
-                                ),
-                              ),
-
-
-                              SizedBox(height: constraints.maxHeight * 0.03), // Space below the button
-                            ],
+                      // Cancel Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            authctrl.cancelchest();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: CustomColors.backgroundColor,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
+                      SizedBox(height: constraints.maxHeight * 0.02),
+
+                      // Verify Button
+                      if (participantdetails.cheststatus == 1 && participantdetails.paystatus == 'Paid') ...[
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            eventctrl.allocateNumber();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: CustomColors.regText,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            'Issue',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      ],
                     ],
                   ),
                 ),

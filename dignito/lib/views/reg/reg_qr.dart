@@ -22,90 +22,85 @@ class Reg_scanqr extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-        extendBodyBehindAppBar: true,
-        resizeToAvoidBottomInset: false,
-        // appBar: AppBar(
-        //   backgroundColor: Colors.transparent, // Transparent to show gradient
-        //   leading: IconButton(
-        //     icon: const Icon(Icons.arrow_back, color: Colors.white),
-        //     onPressed: authctrl.verifyLogout,
-        //   ),
-        //   elevation: 0, // Removes shadow
-        // ),
+        resizeToAvoidBottomInset: true,
+        backgroundColor: CustomColors.DigBlack,
         body: Container(
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              colors: [
-                const Color(0xFF008080).withOpacity(0.8), // Darker shade with opacity
-                const Color(0xFF271C22), // Dark background color
-              ],
-              center: Alignment.topCenter,
-              radius: 0.8, // Adjusted for a more subtle effect
-              stops: const [0.0, 1.0],
-            ),
-          ),
+          
+          // decoration: BoxDecoration(
+          //   gradient: RadialGradient(
+          //     colors: [
+          //       const Color(0xFF008080).withOpacity(0.8), // Darker shade with opacity
+          //       const Color(0xFF271C22), // Dark background color
+          //     ],
+          //     center: Alignment.topCenter,
+          //     radius: 0.8, // Adjusted for a more subtle effect
+          //     stops: const [0.0, 1.0],
+          //   ),
+          // ),
           child: SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start, // Aligns to the top
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20.0), // Adjust padding as needed
-                          child: Image.asset(
-                            'assets/logo.png', // Update this path to your logo
-                            height: 200, // Increased height for a bigger logo
-                            fit: BoxFit.contain, // Maintain aspect ratio
+                return SingleChildScrollView( // Wrap with SingleChildScrollView
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start, // Aligns to the top
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0), // Adjust padding as needed
+                            child: Image.asset(
+                              'assets/logo.png', // Update this path to your logo
+                              height: 150, // Increased height for a bigger logo
+                              fit: BoxFit.contain, // Maintain aspect ratio
+                            ),
                           ),
-                        ),
-                        // QR Scanner
-                        Container(
-                          height: 300.0,
-                          width: 300.0,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: CustomColors.DigTeal, width: 3.0),
-                            borderRadius: BorderRadius.circular(8.0),
-                            color: Colors.transparent,
+                          // QR Scanner
+                          Container(
+                            height: 300.0,
+                            width: 300.0,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: CustomColors.DigTeal, width: 3.0),
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: Colors.transparent,
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: QRView(
+                              key: qrctrl.qrKey,
+                              onQRViewCreated: (QRViewController controller) {
+                                qrctrl.qrViewController = controller;
+                                controller.scannedDataStream.listen(
+                                  qrctrl.onQRCodeScanned,
+                                );
+                              },
+                            ),
                           ),
-                          clipBehavior: Clip.antiAlias,
-                          child: QRView(
-                            key: qrctrl.qrKey,
-                            onQRViewCreated: (QRViewController controller) {
-                              qrctrl.qrViewController = controller;
-                              controller.scannedDataStream.listen(
-                                qrctrl.onQRCodeScanned,
-                              );
-                            },
+                          SizedBox(
+                            height: constraints.maxHeight *
+                                Constants.sizedBoxHeight,
                           ),
-                        ),
-                        SizedBox(
-                          height: constraints.maxHeight *
-                              Constants.sizedBoxHeight,
-                        ),
-                        // Participant ID Input
-                        InputField(
-                          labelText: 'Participant ID',
-                          icon: Icons.person,
-                          initialValue: '',
-                          onPressedCallback: qrctrl.clearErrorMsg,
-                          readOnly: false,
-                          controller: qrctrl.gatewayIdctrl,
-                        ),
-                        SizedBox(
-                          height: constraints.maxHeight *
-                              Constants.sizedBoxHeight,
-                        ),
-                        // Continue Button
-                        button(
-                          'Continue',
-                          qrctrl.getCandidateDetails,
-                          CustomColors.DigTeal,
-                        ),
-                      ],
+                          // Participant ID Input
+                          InputField(
+                            labelText: 'Participant ID',
+                            icon: Icons.person,
+                            initialValue: '',
+                            onPressedCallback: qrctrl.clearErrorMsg,
+                            readOnly: false,
+                            controller: qrctrl.gatewayIdctrl,
+                          ),
+                          SizedBox(
+                            height: constraints.maxHeight *
+                                Constants.sizedBoxHeight,
+                          ),
+                          // Continue Button
+                          button(
+                            'Continue',
+                            qrctrl.getCandidateDetails,
+                            CustomColors.DigTeal,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import '../../controllers/authController.dart';
 
 class Registration extends StatelessWidget {
-  final CandidateDetails candidateDetails;
+   final CandidateDetails candidateDetails;
 
   const Registration({super.key, required this.candidateDetails});
   
@@ -60,7 +60,7 @@ class Registration extends StatelessWidget {
                       // ID Card Status
                       Textfield(
                         labelText: 'ID Card Status',
-                        initialValue: candidateDetails.status == 1 ? 'Issued' : 'Not Issued', // Handle Status
+                        initialValue: candidateDetails.status == 0 ? 'Issued' : 'Not Issued', // Handle Status
                       ),
                       SizedBox(height: constraints.maxHeight * 0.05),
                       SizedBox(height: constraints.maxHeight * 0.05),
@@ -92,7 +92,7 @@ class Registration extends StatelessWidget {
                       SizedBox(height: constraints.maxHeight * 0.02), // Space between buttons
 
                       // Issue Button (only visible if candidateDetails.status is 0)
-                      if (candidateDetails.status == 0) ...[
+                      if (candidateDetails.status == 1) ...[
                         SizedBox(
                           width: double.infinity, // Make button full width
                           child: ElevatedButton(
