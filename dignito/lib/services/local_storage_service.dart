@@ -5,6 +5,7 @@ class LocalStorage {
   static setValue(String key, String value) {
     _storage.write(key: key, value: value);
   }
+  
 
   static Future<String?> getValue(String key) async {
     return await _storage.read(key: key);

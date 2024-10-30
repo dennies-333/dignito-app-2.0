@@ -73,17 +73,20 @@ class EventDetails extends StatelessWidget {
                       SizedBox(height: constraints.maxHeight * 0.03),
                       EventText(
                         labelText: 'Payment Status',
-                        icon: Icons.event,
+                        icon: participantdetails.paystatus == 'Paid' ? Icons.check_circle : Icons.hourglass_empty,
                         initialValue: participantdetails.paystatus,
                       ),
                       SizedBox(height: constraints.maxHeight * 0.03),
                       // Chest Number
                       if(participantdetails.paystatus == 'Paid') ...[
+                        
                       ChestField(
                         icon: Icons.confirmation_number,
                         fixedString: participantdetails.chestcode,
                         initialNumber: participantdetails.chestnumber,
                         numberController: eventctrl.allocatedNumberController,
+                        isEditable: participantdetails.cheststatus,
+                        
                       ),
                       SizedBox(height: constraints.maxHeight * 0.03),
                       ],
@@ -114,12 +117,12 @@ class EventDetails extends StatelessWidget {
                       SizedBox(height: constraints.maxHeight * 0.02),
 
                       // Verify Button
-                      if (participantdetails.cheststatus == 1 && participantdetails.paystatus == 'Paid') ...[
+                      if (participantdetails.paystatus == 'Paid') ...[
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            eventctrl.allocateNumber();
+                            eventctrl.allocateNumber(participantdetails);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: CustomColors.regText,
@@ -129,7 +132,7 @@ class EventDetails extends StatelessWidget {
                             ),
                           ),
                           child: const Text(
-                            'Issue',
+                            'Submit',
                             style: TextStyle(
                               fontSize: 18,
                               color: Colors.black,

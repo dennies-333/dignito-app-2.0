@@ -61,7 +61,7 @@ class Reg_scanqr extends StatelessWidget {
                             width: 300.0,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: CustomColors.DigTeal, width: 3.0),
+                                  color: CustomColors.regText, width: 3.0),
                               borderRadius: BorderRadius.circular(8.0),
                               color: Colors.transparent,
                             ),
@@ -87,7 +87,7 @@ class Reg_scanqr extends StatelessWidget {
                             initialValue: '',
                             onPressedCallback: qrctrl.clearErrorMsg,
                             readOnly: false,
-                            controller: qrctrl.gatewayIdctrl,
+                            controller: qrctrl.candid,
                           ),
                           SizedBox(
                             height: constraints.maxHeight *
@@ -97,7 +97,7 @@ class Reg_scanqr extends StatelessWidget {
                           button(
                             'Continue',
                             qrctrl.getCandidateDetails,
-                            CustomColors.DigTeal,
+                            CustomColors.regText,
                           ),
                         ],
                       ),

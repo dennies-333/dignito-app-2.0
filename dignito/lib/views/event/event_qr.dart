@@ -4,7 +4,6 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../controllers/EventController.dart';
 import '../../components/input_field.dart';
 import '../../components/button.dart';
-import '../../constants.dart';
 import '../../controllers/authController.dart';
 import '../../custom_colors.dart';
 

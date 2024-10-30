@@ -31,12 +31,12 @@ class AuthController extends GetxController {
 
   void cancelReg() async {
     await LocalStorage.removeValue('Candid');
-    Get.offAll(() => const Reg_scanqr());
+    Get.off(() => const Reg_scanqr());
   }
   
   void cancelchest() async {
     await LocalStorage.removeValue('Candid');
-    Get.offAll(() => const Homepage());
+    Get.off(() => const Homepage());
   }
 
   void logout() async {

@@ -7,7 +7,7 @@ class Participantdetails {
   final int status;
   final String paystatus;
   final String chestcode;
-  final int chestnumber;
+  String chestnumber;
   final int cheststatus;
 
   Participantdetails({
@@ -21,12 +21,16 @@ class Participantdetails {
     required this.cheststatus,
   });
     
-  Map<String, dynamic> toJson() {
-    return {
-      'iname': iname,
-      'cname': cname,
-      'events': events,
-      'status': status,
-    };
+ factory Participantdetails.fromJson(Map<String, dynamic> json) {
+    return Participantdetails(
+      iname: json['iname'] ?? 'Unknown Institute',
+      cname: json['cname'] ?? 'Unknown Candidate',
+      events: json['events'] ?? 'No Event',
+      status: json['status'] ?? 0,
+      paystatus: json['pay_status'] ?? 'Unpaid',
+      chestcode: json['chestcode'] ?? 'N/A',
+      chestnumber: json['chestno'].toString() ?? '0', // Handle as string
+      cheststatus: json['cheststatus'] ?? 0,
+    );
   }
 }

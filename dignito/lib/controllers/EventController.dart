@@ -1,3 +1,4 @@
+import 'package:dignito/views/event/event_qr.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../services/http_service.dart';
@@ -12,33 +13,79 @@ import '../views/event/homepage.dart';
 class Eventcontroller extends GetxController {
   final participantid = TextEditingController();
   final TextEditingController allocatedNumberController = TextEditingController();
+  final TextEditingController firstPrizeController = TextEditingController();
+  final TextEditingController secondPrizeController = TextEditingController();
+  final TextEditingController secondPrizeinst = TextEditingController();
+  final TextEditingController firstPrizeinst = TextEditingController();
+  final TextEditingController secondPrizememb = TextEditingController();
+  final TextEditingController firstPrizememb = TextEditingController();
 
   var errorMsg = ''.obs;
+  var firstPrizeDetails = ''.obs;  
+  var secondPrizeDetails = ''.obs; 
+  var errorMessage = ''.obs;
   QRViewController? qrViewController;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   void onQRCodeScanned(Barcode scanData) async {
     final String scannedCode = scanData.code ?? '';
     participantid.text = scannedCode;
-    await LocalStorage.setValue('CandId', scannedCode);
   }
 
   void eventDetailsPage() async{
+
+    String partid = participantid.text;
+    await LocalStorage.setValue('CandId', partid);
     Participantdetails? participantDetails = await HttpServices.EventId();
     if (participantDetails != null && participantDetails.cname.isNotEmpty){
       if(participantDetails.cname == "Err"){
-        errorMsg.value = ErrorMessages.InvalidCandidateIdError;
+        Get.snackbar('Unsuccessful', 'Invalid ID', colorText: Colors.white);
       } else {
         print('moving to displau page');
         Get.off(() => EventDetails(participantdetails: participantDetails));}
     } else {
-      errorMsg.value = ErrorMessages.InvalidCandidateIdError;
+      Get.snackbar('Error', 'Please try again', colorText: Colors.white);
     }
   }
 
-  void allocateNumber() async{
-    
-    Get.to(() => const Homepage());
+  void allocateNumber(Participantdetails partdet) async{
+    partdet.chestnumber = allocatedNumberController.text.trim();
+    bool response = await HttpServices.issueChestNumber(partdet);
+    if(!response){
+      Get.snackbar('Unsuccessful', 'An error occured', colorText: Colors.white);
+    }// else {
+    //   Get.snackbar("Unsuccessful", 'An error occured');
+    // }
+    Get.off(() => const Homepage());
+  }
+
+
+  void fetchDetails(int position) async {
+    if(position == 1){
+      final chestno = firstPrizeController.text.trim();
+      var response = await HttpServices.getplacementDetails(chestno);
+      if (response == false){
+
+      } else {
+        firstPrizeinst.text = response.instname;
+        firstPrizememb.text = response.members;
+      }
+    } else {
+      final chestno = secondPrizeController.text.trim();
+      var response = await HttpServices.getplacementDetails(chestno);
+      if (response == false){
+
+      } else {
+        secondPrizeinst.text = response.instname;
+        secondPrizememb.text = response.members;
+      }
+    }
+  }
+
+  void postPlacements() async {
+   final firstposition = firstPrizeController.text.trim();
+   final secondposition = secondPrizeController.text.trim();
+   final Response = await HttpServices.postplacement(firstposition,secondposition);
   }
 
   void clearErrorMsg() {
@@ -49,9 +96,4 @@ class Eventcontroller extends GetxController {
     Get.back();
   }
 
-  @override
-  void onClose() {
-    qrViewController?.dispose();
-    super.onClose();
-  }
 }

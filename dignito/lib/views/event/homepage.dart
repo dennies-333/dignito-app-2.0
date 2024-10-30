@@ -19,7 +19,7 @@ class _HomepageState extends State<Homepage> {
 
   final List<Widget> _pages = [
     const EventQr(), // Page for QR scanner icon
-    const Placement(), // Page for events icon
+    Placement(), // Page for events icon
   ];
 
   @override

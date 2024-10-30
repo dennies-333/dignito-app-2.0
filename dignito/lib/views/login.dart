@@ -13,68 +13,110 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Container(
-        decoration: BoxDecoration(
+        height: MediaQuery.of(context).size.height, // Make the container full height
+        decoration: const BoxDecoration(
           gradient: RadialGradient(
             colors: [
-              const Color(0xFFd02adb).withOpacity(0.8), // Darker shade with opacity
-              const Color(0xFF271C22), // Dark background color
+              CustomColors.regText,
+              Color(0xFF271C22),
             ],
             center: Alignment.topCenter,
-            radius: 0.8, // Adjusted for a more subtle effect
-            stops: const [0.0, 1.0],
+            radius: 0.8,
+            stops: [0.0, 1.0],
           ),
         ),
         child: SafeArea(
-          child: LayoutBuilder(builder: (context, constraints) {
-            return Center(
+          child: Center(
+            child: SingleChildScrollView( // Wrap the Column with SingleChildScrollView
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center, // Center the content
                 children: [
                   // Logo
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0), // Adjust padding as needed
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Image.asset(
-                      'assets/logo.png', // Update this path to your logo
-                      height: 200, // Increased height for a bigger logo
-                      fit: BoxFit.contain, // Maintain aspect ratio
+                      'assets/logo.png',
+                      height: 200,
+                      fit: BoxFit.contain,
                     ),
                   ),
 
-                  SizedBox(
-                    height: constraints.maxHeight * 0.05, // Space from the logo
-                  ),
+                  const SizedBox(height: 20), // Static height instead of based on constraints
 
                   // Username Input Field
                   InputField(
                     labelText: 'Username',
                     icon: Icons.person,
-                    initialValue: '', // Default initial value
+                    initialValue: '',
                     onPressedCallback: loginCtrl.clearErrorMsg,
                     readOnly: false,
                     controller: loginCtrl.usernameCtrl,
                   ),
 
-                  SizedBox(
-                    height: constraints.maxHeight * 0.02,
-                  ),
+                  const SizedBox(height: 20), // Static height instead of based on constraints
 
                   // Password Input Field
                   InputField(
                     labelText: 'Password',
                     icon: Icons.lock,
-                    initialValue: '', // Default initial value
+                    initialValue: '',
                     onPressedCallback: loginCtrl.clearErrorMsg,
                     readOnly: false,
                     controller: loginCtrl.passwordCtrl,
                   ),
-                  SizedBox(
-                    height: constraints.maxHeight * 0.02,
-                  ),
+
+                  const SizedBox(height: 20), // Static height instead of based on constraints
+
+                  // Role Selection Toggle Buttons
+                  Obx(
+  () => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 40.0),
+    child: ToggleButtons(
+      isSelected: [
+        loginCtrl.selectedRoleIndex.value == 0,
+        loginCtrl.selectedRoleIndex.value == 1
+      ],
+      borderRadius: BorderRadius.circular(10),
+      fillColor: CustomColors.regText.withOpacity(0.8),
+      selectedColor: Colors.white,
+      color: Colors.white70,
+      borderColor: Colors.white,
+      selectedBorderColor: Colors.white,
+      children: const [
+        SizedBox(
+          width: 120, // Set a fixed width for the button
+          child: Center( // Center the text
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text('Staff'),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 120, // Set a fixed width for the button
+          child: Center( // Center the text
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text('Student'),
+            ),
+          ),
+        ),
+      ],
+      onPressed: (int index) {
+        loginCtrl.selectedRoleIndex.value = index;
+      },
+    ),
+  ),
+),
+
+
+                  const SizedBox(height: 20), // Static height instead of based on constraints
 
                   // Error Message
                   SizedBox(
-                    width: constraints.maxWidth * 0.8,
+                    width: MediaQuery.of(context).size.width * 0.8, // Responsive width
                     child: GetBuilder<LoginController>(
                       builder: (controller) {
                         return Text(
@@ -88,19 +130,19 @@ class LoginView extends StatelessWidget {
                       },
                     ),
                   ),
-                  SizedBox(
-                    height: constraints.maxHeight * 0.02,
-                  ),
+
+                  const SizedBox(height: 20), // Static height instead of based on constraints
 
                   // Login Button
                   button(
                     'Login',
-                    loginCtrl.validateInputs,
-                    CustomColors.DigPink,
+                    () {
+                      loginCtrl.validateInputs(); // Pass role to the controller
+                    },
+                    CustomColors.regText,
                   ),
-                  SizedBox(
-                    height: constraints.maxHeight * 0.02,
-                  ),
+
+                  const SizedBox(height: 20), // Static height instead of based on constraints
 
                   const Text(
                     'Powered by dist',
@@ -108,8 +150,8 @@ class LoginView extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          }),
+            ),
+          ),
         ),
       ),
     );

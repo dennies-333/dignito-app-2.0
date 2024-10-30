@@ -10,31 +10,37 @@ import '../views/reg/reg_qr.dart';
 
 
 class Regcontroller extends GetxController {
-  final gatewayIdctrl = TextEditingController();
+  final candid = TextEditingController();
   
   var errorMsg = ''.obs;
-  var gatewayName = '';
+  var candId = '';
   QRViewController? qrViewController;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   void onQRCodeScanned(Barcode scanData) async {
     final String scannedCode = scanData.code ?? '';
-    gatewayIdctrl.text = scannedCode;
+    candid.text = scannedCode;
   }
 
 void getCandidateDetails() async {
-
-  await LocalStorage.setValue('CandId', gatewayIdctrl.text);
-  CandidateDetails? candidateDetails = await HttpServices.isCandIdValid();
-  if (candidateDetails != null && candidateDetails.cname.isNotEmpty) {
-    if(candidateDetails.cname == "Err"){
-      errorMsg.value = ErrorMessages.InvalidCandidateIdError;
-    } else {
-      Get.off(() => Registration(candidateDetails: candidateDetails));
-    }
+  if(candid.text == ''){
+    Get.snackbar("Error", "Empty field",
+    colorText: Colors.white);
+  } else{
+     await LocalStorage.setValue('CandId', candid.text);
+    CandidateDetails? candidateDetails = await HttpServices.isCandIdValid();
+    if (candidateDetails != null && candidateDetails.cname.isNotEmpty) {
+      if(candidateDetails.cname == "Err"){
+        Get.snackbar("Unsuccessful", 'Invalid Id',
+        colorText: Colors.white);
+      } else {
+        Get.off(() => Registration(candidateDetails: candidateDetails));
+      }
   } else {
     errorMsg.value = ErrorMessages.InvalidCandidateIdError;
   }
+  }
+ 
 }
 
 
@@ -43,11 +49,11 @@ void getCandidateDetails() async {
   bool response = await HttpServices.issueIdCard();
 
   if (response == true) {
-    Get.snackbar('Successful','ID issued.');
+    Get.snackbar('Successful','ID issued.', colorText: Colors.white);
     await LocalStorage.removeValue('CandId');
     Get.off(() => const Reg_scanqr());
   } else {
-    Get.snackbar('error', 'try again');
+    Get.snackbar('error', 'try again', colorText: Colors.white);
     errorMsg.value = ErrorMessages.InvalidCandidateIdError;
   }
     
@@ -61,9 +67,4 @@ void getCandidateDetails() async {
     Get.back();
   }
 
-  @override
-  void onClose() {
-    qrViewController?.dispose();
-    super.onClose();
-  }
 }
